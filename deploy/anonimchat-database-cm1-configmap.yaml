@@ -11,5 +11,5 @@ data:
 kind: ConfigMap
 metadata:
   labels:
-    io.kompose.service: anonimchat-database
+    name: anonimchat-database
   name: anonimchat-database-cm1
