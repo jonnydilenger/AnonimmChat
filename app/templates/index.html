@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anonymous Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #chat-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 300px;
+            overflow-y: scroll;
+            margin-bottom: 10px;
+        }
+        #message-input {
+            width: calc(100% - 80px);
+        }
+        #send-button {
+            width: 70px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Anonymous Chat</h1>
+
+    <div id="chat-box"></div>
+
+    <input type="text" id="message-input" placeholder="Type your message..." />
+    <button id="send-button">Send</button>
+
+    <script>
+        // Функция для загрузки сообщений
+        function loadMessages() {
+            fetch('/messages')
+                .then(response => response.json())
+                .then(messages => {
+                    const chatBox = document.getElementById('chat-box');
+                    chatBox.innerHTML = ''; // Очищаем содержимое
+                    messages.forEach(message => {
+                        const messageElement = document.createElement('div');
+                        messageElement.textContent = message;
+                        chatBox.appendChild(messageElement);
+                    });
+                    chatBox.scrollTop = chatBox.scrollHeight; // Прокручиваем вниз
+                });
+        }
+
+        // Загрузка сообщений при открытии страницы
+        loadMessages();
+
+        // Отправка нового сообщения
+        document.getElementById('send-button').addEventListener('click', () => {
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value;
+            if (message) {
+                fetch('/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: message }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'Message sent') {
+                        messageInput.value = ''; // Очистить поле ввода
+                        loadMessages(); // Перезагрузить сообщения
+                    }
+                });
+            }
+        });
+
+        // Автоматическая загрузка новых сообщений каждые 2 секунды
+        setInterval(loadMessages, 2000);
+    </script>
+</body>
+</html>

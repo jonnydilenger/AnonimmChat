@@ -1,0 +1,49 @@
+networks:
+  anonimchat-public:
+    name: anonimchat-public
+    ipam:
+      driver: default
+    internal: false
+  anonimchat-private:
+    name: anonimchat-private
+    driver: bridge
+    internal: true
+
+volumes:
+  anonimchat-data:
+    name: anonimchat-data
+
+services:
+  anonimchat:
+    container_name: anonimchat
+    build:
+      context: app
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      MYSQL_HOST: anonimchat-database
+      MYSQL_DATABASE: my_database
+      MYSQL_USER: my_user
+      MYSQL_PASSWORD: my_password
+    networks:
+      - anonimchat-private
+      - anonimchat-public
+    depends_on:
+      - anonimchat-database
+
+  anonimchat-database:
+    container_name: anonimchat-database
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: my_secret_password
+      MYSQL_DATABASE: my_database
+      MYSQL_USER: my_user
+      MYSQL_PASSWORD: my_password
+    volumes:
+      - anonimchat-data:/var/lib/mysql
+      - ./initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    networks:
+      - anonimchat-private
