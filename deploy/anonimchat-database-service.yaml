@@ -1,13 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  labels:
-    name: anonimchat-database
-  name: anonimchat-database
+  name: mysql-service
 spec:
   ports:
-    - name: "3306"
-      port: 3306
+    - port: 3306
       targetPort: 3306
   selector:
     name: anonimchat-database
+  type: ClusterIP

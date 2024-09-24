@@ -35,12 +35,11 @@ spec:
             - mountPath: /var/lib/mysql
               name: anonimchat-data
             - mountPath: /docker-entrypoint-initdb.d
-              name: anonimchat-database-cm1
+              name: init-scripts
       restartPolicy: Always
       volumes:
         - name: anonimchat-data
-          persistentVolumeClaim:
-            claimName: anonimchat-data
-        - configMap:
+          emptyDir: {}  # Используем emptyDir для временного хранения данных
+        - name: init-scripts
+          configMap:
             name: anonimchat-database-cm1
-          name: anonimchat-database-cm1
