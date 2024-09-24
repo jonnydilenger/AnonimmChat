@@ -30,7 +30,7 @@ spec:
               value: my_password
             - name: MYSQL_USER
               value: my_user
-          image: anonimchat
+          image: docker.io/ujinpavlovich/anonimmchat:latest
           name: anonimchat
           ports:
             - containerPort: 5000
